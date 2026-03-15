@@ -1,3 +1,5 @@
+vim.opt.hidden = true
+vim.opt.showtabline = 2
 vim.opt.rtp:append(vim.fn.stdpath("data") .. "/site")
 vim.opt.rtp:prepend("/home/yagizylldrm/.local/share/nvim/site")
 vim.g.mapleader = " "
@@ -27,10 +29,74 @@ require("lazy").setup({
 			priority = 1000,
 			config = function()
 				require("catppuccin").setup({
-					integrations = { treesitter = true, rainbow_delimiters = true },
+					integrations = {
+						treesitter = true,
+						rainbow_delimiters = true,
+						lualine = true,
+						bufferline = true,
+						noice = true,
+						native_lsp = { enabled = true },
+					},
 				})
-				vim.cmd.colorscheme("catppuccin-mocha")
+				vim.cmd.colorscheme("catppuccin-nvim")
 			end,
+		},
+
+		{
+			"folke/noice.nvim",
+			event = "VeryLazy",
+			opts = {
+				lsp = {
+					-- LSP mesajlarını Noice üzerinden gösterir
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true,
+					},
+				},
+				-- Komut satırı ve arama kutusu ayarları
+				presets = {
+					bottom_search = false, -- Arama kutusunu aşağıdan yukarı taşır
+					command_palette = true, -- Komut satırını ekranın ortasına alır
+					long_message_to_split = true,
+					inc_rename = false, -- Henüz inc-rename kurmadığımız için kapalı
+					lsp_doc_border = true, -- LSP dokümanlarına çerçeve ekler
+				},
+			},
+			dependencies = {
+				"MunifTanjim/nui.nvim",
+				"rcarriga/nvim-notify", -- Şık bildirim pencereleri için
+			},
+		},
+
+		{
+			"akinsho/bufferline.nvim",
+			version = "*",
+			dependencies = "nvim-tree/nvim-web-devicons",
+			-- Eklentinin UI çizmesi için çok erkenden yüklenmesini sağlıyoruz
+			event = "VeryLazy",
+			config = function()
+				require("bufferline").setup({
+					options = {
+						mode = "buffers",
+						separator_style = "slant",
+						always_show_bufferline = true, -- Bu ayarın çalışması için üstteki hatanın gitmesi lazım
+						offsets = {
+							{
+								filetype = "neo-tree",
+								text = "EXPLORER",
+								text_align = "left",
+								separator = true,
+							},
+						},
+					},
+				})
+			end,
+			keys = {
+				{ "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Önceki Tab" },
+				{ "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Sonraki Tab" },
+				{ "<leader>q", "<cmd>bdelete<cr>", desc = "Sekmeyi Kapat" },
+			},
 		},
 
 		{
@@ -38,7 +104,7 @@ require("lazy").setup({
 			dependencies = { "nvim-tree/nvim-web-devicons" },
 			opts = {
 				options = {
-					theme = "catppuccin",
+					theme = "auto",
 					component_seperators = "|",
 					section_seperators = { left = "", right = "" },
 				},
@@ -50,6 +116,10 @@ require("lazy").setup({
 			branch = "v3.x",
 			dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim" },
 			lazy = false,
+			options = {
+				mode = "buffer",
+				always_show_bufferline = true,
+			},
 			keys = { { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "File Explorer" } },
 		},
 
@@ -399,7 +469,7 @@ require("lazy").setup({
 })
 
 -- 3. Temel Ayarlar
-vim.cmd.colorscheme("catppuccin-mocha")
+vim.cmd.colorscheme("catppuccin-nvim")
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true -- Satırlar arası hızlı zıplama (C++ kodlarında çok işe yarar)
@@ -418,13 +488,7 @@ local function run_code()
 
 	if ft == "cpp" then
 		-- Önce klasöre git (cd), sonra derle, sonra çalıştır
-		cmd_str = string.format(
-			'bash -c \'cd "%s" && g++ -g "%s" -o "%s" && ./%s\'',
-			file_dir,
-			file_name,
-			file_name_no_ext,
-			file_name_no_ext
-		)
+		cmd_str = string.format('bash -c \'cd "%s" && g++ -g -std=c++26 *.cpp -o "app.out" && ./app.out\'', file_dir)
 	elseif ft == "c" then
 		cmd_str = string.format(
 			'bash -c \'cd "%s" && gcc -g "%s" -o "%s" && ./%s\'',

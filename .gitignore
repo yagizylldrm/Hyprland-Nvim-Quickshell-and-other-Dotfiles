@@ -1,0 +1,15 @@
+*
+
+!*/
+
+!hypr/
+!nvim/
+!kitty/
+!fish/
+!quickshell/
+!fastfetch/
+!Thunar/
+
+!.gitignore
+
+nvim/undodir/

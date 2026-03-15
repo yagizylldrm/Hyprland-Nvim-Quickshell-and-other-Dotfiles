@@ -58,6 +58,16 @@ return {
 				vim.lsp.config(server, {
 					capabilities = capabilities,
 				})
+				-- Clangd için C++26 ve özel ayarlar
+				vim.lsp.config("clangd", {
+					cmd = {
+						"clangd",
+						"--header-insertion=never", -- Gereksiz include eklemelerini önler
+						"--background-index",
+					},
+					capabilities = capabilities,
+				})
+				vim.lsp.enable("clangd")
 				vim.lsp.enable(server)
 			end
 
