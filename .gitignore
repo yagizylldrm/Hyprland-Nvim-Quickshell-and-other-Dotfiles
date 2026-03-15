@@ -1,7 +1,10 @@
+# 1. Önce her şeyi yoksay
 *
 
+# 2. Klasörlerin içine bakabilmek için klasör yapısına izin ver
 !*/
 
+# 3. Takip etmek istediğin klasörleri BEYAZ LİSTEYE al
 !hypr/
 !nvim/
 !kitty/
@@ -9,7 +12,10 @@
 !quickshell/
 !fastfetch/
 !Thunar/
-
 !.gitignore
 
+# 4. ÖZEL İSTİSNALAR (Bu kurallar en altta olmalı ki yukarıdaki '!' kurallarını ezsin)
+# Beyaz listedeki klasörlerin içinde olsa bile bunları yoksay:
+fish/fish_variables
 nvim/undodir/
+Code - Insiders/
