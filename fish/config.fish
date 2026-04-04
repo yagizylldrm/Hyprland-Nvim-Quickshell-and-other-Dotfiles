@@ -39,3 +39,7 @@ if not string match -q -- $PNPM_HOME $PATH
   set -gx PATH "$PNPM_HOME" $PATH
 end
 # pnpm end
+
+# Ryzen Limit Kontrol Aliasları
+alias sessiz-mod="sudo systemctl start ryzen-limit.service; and notify-send 'Termal Mod' 'Sessiz Profil Aktif'"
+alias performans-mod="sudo systemctl stop ryzen-limit.service; and notify-send 'Termal Mod' 'Tam Performans Aktif'"
